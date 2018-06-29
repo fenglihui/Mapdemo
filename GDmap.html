@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>高德地图</title>
+    <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+    <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.6&key=0f725c13d51ff337bba15656045c80b4"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .all{
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .map-title{
+            width: 1000px;
+            height: 80px;
+            margin:0 auto;
+            color: #000;
+            background: #ff9b02;
+            text-align: center;
+            line-height: 80px;
+        }
+        #map{
+            margin:0 auto;
+            width: 1000px;
+            height: 500px;
+            border: 1px solid #000000;
+        }
+    </style>
+</head>
+<body>
+<div class="all">
+    <div class="map-title">
+        map-title
+    </div>
+    <div id="map">
+
+    </div>
+    <div id="tip"></div>
+</div>
+<script type="text/javascript">
+        var map = new AMap.Map('map', {
+            resizeEnable: true,
+            zoom: 11,//级别
+            viewMode: '3D'//使用3D视图
+        });
+        var infoWindow = new AMap.InfoWindow({ //创建信息窗体
+            isCustom: true,  //使用自定义窗体
+            content: '<div style="width: 100px;height: 10px;background: #0b63ff;"></div><div style="width: 100px;height: 40px;background: #FFFFFF;color: #000000;text-align: center;line-height: 40px">信息窗体</div>', //信息窗体的内容可以是任意html片段
+            offset: new AMap.Pixel(16, -45)
+        });
+        var onMarkerClick = function (e) {
+            infoWindow.open(map, e.target.getPosition());
+        }//打开信息窗体
+        //e.target就是被点击的Marker
+        var marker = new AMap.Marker({
+            position: [116.481181, 39.989792]
+        });
+        map.add(marker);
+        marker.on('click', onMarkerClick);
+        map.plugin('AMap.Geolocation', function () {//异步加载插件
+                var geolocation = new AMap.Geolocation({
+                // 是否使用高精度定位，默认：true
+                enableHighAccuracy: true,
+                // 设置定位超时时间，默认：无穷大
+                timeout: 10000,
+                // 定位按钮的停靠位置的偏移量，默认：Pixel(10, 20)
+                buttonOffset: new AMap.Pixel(10, 20),
+                //  定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+                zoomToAccuracy: true,
+                //  定位按钮的排放位置,  RB表示右下
+                buttonPosition: 'RB'
+            });
+            map.addControl(geolocation);
+            geolocation.getCurrentPosition()
+            AMap.event.addListener(geolocation, 'complete', onComplete)
+            AMap.event.addListener(geolocation, 'error', onError)
+            function onComplete (data) {
+                // data是具体的定位信息
+            }
+            function onError (data) {
+                // 定位出错
+            }
+        })
+</script>
+</body>
+</html>
